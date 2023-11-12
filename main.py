@@ -1,43 +1,66 @@
-import pygame
+import pygame 
 from pygame.locals import *
 
-def generate_snake():
-    surface = pygame.display.set_mode(size = (1000,500))
-    surface.fill((110, 110, 5)) 
-    surface.blit(snake, (snake_x,snake_y))
-    pygame.display.flip()
+class Game:
 
-if __name__ == "__main__":
-    pygame.init()
+    def __init__(self):
+        pygame.init()
+        self.surface = pygame.display.set_mode((500,500))
+        self.surface.fill((110,110,5))
+        self.snake = Snake(self.surface)
+        self.snake.generate_snake()
+        self.run()
 
-    surface = pygame.display.set_mode(size = (1000,500))
-    surface.fill((110, 110, 5)) 
-    
-    snake = pygame.image.load("resources/block.jpg").convert()
-    snake_x = 100
-    snake_y = 100
-    surface.blit(snake, (snake_x,snake_y))
+    def run(self):
+        running = True
 
-    pygame.display.flip()
+        while running:
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        running = False
+                    
+                    elif event.key == K_UP:
+                        self.snake.move_up()
+                        
+                    elif event.key == K_DOWN:
+                        self.snake.move_down()
+                        
+                    elif event.key == K_RIGHT:
+                        self.snake.move_right()
 
-    running = True
+                    elif event.key == K_LEFT:
+                        self.snake.move_left() 
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    running = False
-                elif event.key == K_UP:
-                    snake_y -= 10
-                    generate_snake()
-                elif event.key == K_DOWN:
-                    snake_y += 10
-                    generate_snake()
-                elif event.key == K_RIGHT:
-                    snake_x += 10
-                    generate_snake()
-                elif event.key == K_LEFT:
-                    snake_x -= 10
-                    generate_snake()
+class Snake:
 
-           
+    def __init__(self, new_surface):
+        self.new_surface = new_surface
+        self.snake = pygame.image.load("resources/block.jpg").convert()
+        self.snake_x = 100
+        self.snake_y = 100
+
+    def generate_snake(self):
+        self.new_surface.fill((110,110,5))
+        self.new_surface.blit(self.snake, (self.snake_x,self.snake_y))
+        pygame.display.flip()
+
+    def move_up(self):
+        self.snake_y -= 10
+        self.generate_snake()
+
+    def move_down(self):
+        self.snake_y += 10
+        self.generate_snake()
+
+    def move_right(self):
+        self.snake_x += 10
+        self.generate_snake()
+
+    def move_left(self):
+        self.snake_x -= 10    
+        self.generate_snake()
+
+if __name__ == '__main__':
+    game = Game()
+    game.run()

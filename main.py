@@ -1,7 +1,7 @@
 import pygame 
 from pygame.locals import *
 import time
-
+import random
 class Game:
 
     def __init__(self):
@@ -12,11 +12,28 @@ class Game:
         self.snake.generate_snake()
         self.apple = Apple(self.surface)
         self.apple.generate_apple()
-        self.run()
+        
 
     def play(self):
         self.snake.walk()
         self.apple.generate_apple()
+        self.display_score()
+        pygame.display.flip()
+
+        if self.is_collision(self.snake.snake_x[0],self.snake.snake_y[0],self.apple.apple_x,self.apple.apple_y):
+            self.snake.increase_length()
+            self.apple.move()
+    
+    def is_collision(self,x1,y1,x2,y2):
+        if x1 >= x2 and x1 < x2 + size:
+            if y1 >= y2 and y1 < y2 + size:
+                return True
+        return False
+
+    def display_score(self):
+        font = pygame.font.SysFont('arial',30)
+        score = font.render(f"Score: {self.snake.length}", True, (255,255,255))
+        self.surface.blit(score, (800,10))
 
     def run(self):
         running = True
@@ -59,6 +76,11 @@ class Snake:
         for i in range(self.length):
             self.new_surface.blit(self.snake, (self.snake_x[i] ,self.snake_y[i]))
         pygame.display.flip()
+
+    def increase_length(self):
+        self.length +=1
+        self.snake_x.append(-1)
+        self.snake_y.append(-1)
 
     def move_up(self):
         self.direction = 'up'
@@ -103,6 +125,9 @@ class Apple:
         self.new_surface.blit(self.apple, (self.apple_x ,self.apple_y))
         pygame.display.flip()
 
+    def move(self):
+        self.apple_x = random.randint(1,24)*size
+        self.apple_y = random.randint(1,19)*size
 
 if __name__ == '__main__':
     game = Game()
